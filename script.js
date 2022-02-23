@@ -1,0 +1,349 @@
+'use strict';
+
+const modal = document.querySelector('.modal');
+const overlay = document.querySelector('.overlay');
+const btnCloseModal = document.querySelector('.btn--close-modal');
+const btnsOpenModal = document.querySelectorAll('.btn--show-modal');
+const btnScrollTo = document.querySelector('.btn--scroll-to');
+const section1 = document.getElementById('section--1');
+
+///////////////////////////////////////
+// Modal window
+const openModal = function (e) {
+  e.preventDefault();
+  overlay.classList.remove('hidden');
+  modal.classList.remove('hidden');
+};
+
+const closeModal = function () {
+  overlay.classList.add('hidden');
+  modal.classList.add('hidden');
+};
+
+document.addEventListener('keydown', function (e) {
+  e.key === 'Escape' && closeModal();
+})
+
+btnsOpenModal.forEach(btn => btn.addEventListener('click', openModal));
+btnCloseModal.addEventListener('click', closeModal);
+
+
+// ///////////////////////////////////////
+// Button scrolling
+btnScrollTo.addEventListener('click', function (e) {
+  // const s1coords = section1.getBoundingClientRect();
+  // console.log(s1coords);
+
+  // console.log('Current scroll (X/Y): ', window.pageXOffset, window.pageYOffset);
+
+  // console.log('Height/Width of vierport', document.documentElement.clientHeight, document.documentElement.clientWidth);
+
+  // Scrolling
+  // window.scrollTo({
+  //     left: 0,
+  //     top: s1coords.top + window.pageYOffset,
+  //     behavior: "smooth"
+  // });
+  // console.log(s1coords.top, window.pageYOffset);
+
+  section1.scrollIntoView({
+    behavior: 'smooth'
+  });
+});
+
+//////////////////////////////////////////
+// Page navigation
+// document.querySelectorAll('.nav__link').forEach(el => el.addEventListener('click', function(e) {
+//     e.preventDefault();
+
+//     const id = this.getAttribute('href');
+//     document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
+
+// }));
+
+// 1. Add event listener to a common parent element
+// 2. determine what element originated the event
+document.querySelector('.nav__links').addEventListener('click', e => {
+  e.preventDefault();
+
+  // Matching strategy
+  if (e.target.classList.contains('nav__link')) {
+    const id = e.target.getAttribute('href');
+    document.querySelector(id).scrollIntoView({
+      behavior: 'smooth'
+    });
+  }
+});
+
+//////////////////////////////////////////
+// Tab Component
+const tabs = document.querySelectorAll('.operations__tab');
+const tabsContainer = document.querySelector('.operations__tab-container');
+const tabsContent = [...document.querySelectorAll('.operations__content')];
+
+// tabsContainer.addEventListener('click', function (e) {
+//   const clicked = e.target.closest('.operations__tab');
+
+//   // Guard clause
+//   if (!clicked) return;
+
+//   // Remove active classes
+//   tabs.forEach(tab => tab.classList.remove('operations__tab--active'));
+//   tabsContent.forEach(el => el.classList.remove('operations__content--active'));
+
+//   // Activate tab
+//   clicked.classList.add('operations__tab--active');
+
+//   // Activate content area
+//   document.querySelector(`.operations__content--${clicked.dataset.tab}`).classList.add('operations__content--active');
+// });
+
+
+
+/* Experimenting: start
+============================*/
+let active, clickedId, activeId, clickable = true;
+const slideTime = 500;
+{
+  tabsContent.forEach(t => t.setAttribute(
+    'style',
+    `transition: transform ${slideTime}ms ease;
+     animation-duration: ${slideTime}ms`
+  ));
+}
+
+tabsContainer.addEventListener('click', function(e) {
+  clickable = false;
+
+  // 1. Get current Active ID
+  active = document.querySelector('.operations__tab--active');
+  activeId = +active.dataset.tab;
+  const clicked = e.target.closest('.operations__tab');
+
+  // Guard clause
+  if (!clicked) return;
+  const clickedId = +clicked.dataset.tab;
+
+  if (clickedId > activeId) {
+    // Go forward
+    document.querySelector(`.operations__content--${activeId}`).classList.add('slideOutLeft');
+    document.querySelector(`.operations__content--${clickedId}`).classList.add('slideInRight', 'operations__content--active');
+
+  } else {
+    // Go backwards
+    document.querySelector(`.operations__content--${activeId}`).classList.add('slideOutRight');
+    document.querySelector(`.operations__content--${clickedId}`).classList.add('slideInLeft', 'operations__content--active');
+  }
+  
+  // 2. Adding active class to clicked tab
+  tabs.forEach(t => t.classList.remove('operations__tab--active'));
+  e.target.closest('.operations__tab').classList.add('operations__tab--active');
+
+  
+  console.log(activeId, clickedId);
+  // if (id > )
+  
+  // active = document.querySelector('operations__content--active');
+
+
+  // console.log(tabsContent);
+});
+
+
+/* Experimenting: end
+============================*/
+
+tabsContent.forEach(c => {
+  c.addEventListener('transitionend', () => {
+    // Check for the old active transition and if clickable is false
+    
+    console.log(c, active);
+    // console.log('end', clickable);
+  })
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//////////////////////////////////////////
+
+// // Selecting Elements
+// console.log(document.documentElement);
+// console.log(document.head);
+// console.log(document.body);
+
+// const header = document.querySelector('.header');
+// // const allSections = document.querySelectorAll('.section');
+// // console.log(document.getElementById('section-1'));
+
+// // const btns = document.getElementsByTagName('button');
+// // console.log(document.getElementsByClassName('btn'));
+
+// // Creating and Inserting Elements
+// const message = document.createElement('div');
+// message.classList.add('cookie-message');
+// message.innerHTML = 'We use cookies to improve functionality and analytics. <button class="btn btn--close-cookie">Got it!';
+
+// header.prepend(message); 
+// header.append(message.cloneNode(true)); 
+
+// header.before(message);
+// header.after(message);
+
+// document.querySelector('.btn--close-cookie').addEventListener('click', () => {
+//   // header.remove(message);
+//   message.remove();
+//   // message.parentElement.removeChild(message);
+//   // message.parentNode.removeChild(message);
+// });
+
+// Styles
+// message.style.backgroundColor = '#000';
+// message.style.width = '120%';
+
+// console.log(message.style.color);
+// console.log(message.style.backgroundColor);
+
+// console.log(getComputedStyle(message).color);
+// console.log(getComputedStyle(message).backgroundColor);
+
+// message.style.height = parseFloat(getComputedStyle(message).height, 10) + 30 + 'px';
+
+// document.documentElement.style.setProperty('--color-primary', 'orangered');
+
+// document.documentElement.style.setProperty('--color-secondary', 'red');
+
+// // Attrubutes
+// const logo = document.querySelector('.nav__logo');
+// console.log(logo.src);
+// console.log(logo.alt);
+// console.log(logo.id);
+// console.log(logo.className);
+
+
+// // Non Standard
+// console.log(logo.getAttribute('designer'));
+// logo.setAttribute('company', 'Bankist');
+
+// console.log(logo.getAttribute('src'));
+// console.log(logo.dataset.versionNumber);
+
+
+// // Classes
+// logo.classList.add('c',  'd');
+// logo.classList.remove('c', 'd');
+// logo.classList.toggle('a');
+// logo.classList.contains('c');
+
+// Don't use
+// logo.className = 'hira';
+
+// const section1 = document.getElementById('section--1');
+// // const s = document.querySelector('#section--3 .section__description')
+// const btnScrollTo = document.querySelector('.btn--scroll-to');
+
+// btnScrollTo.addEventListener('click', function(e) {
+//     const s1coords = section1.getBoundingClientRect();
+//     // console.log(s1coords);
+
+//     // console.log('Current scroll (X/Y): ', window.pageXOffset, window.pageYOffset);
+
+//     // console.log('Height/Width of vierport', document.documentElement.clientHeight, document.documentElement.clientWidth);
+
+//     // Scrolling
+//     // window.scrollTo({
+//     //     left: 0,
+//     //     top: s1coords.top + window.pageYOffset,
+//     //     behavior: "smooth"
+//     // });
+//     // console.log(s1coords.top, window.pageYOffset);
+
+//     section1.scrollIntoView({ behavior: 'smooth' });
+// });
+
+// const h1 = document.querySelector('h1');
+
+// const alertH1 = function() {
+//     alert('This is H1');
+// }
+
+// h1.addEventListener('mouseenter', alertH1);
+// setTimeout(() => h1.removeEventListener('mouseenter', alertH1), 5000);
+
+// h1.onmouseenter = alertH1;
+
+// rgba(255, 265, 32);
+// const randomInt = (min = 0, max = 255) => Math.floor(Math.random() * (max - min + 1) + min);
+// const randomColor = () => `rgba(${randomInt()}, ${randomInt()}, ${randomInt()})`;
+
+// document.querySelector('.nav__link').addEventListener('click', function(e) {
+//     this.style.backgroundColor = randomColor();
+//     console.log('link', e.target, e.currentTarget);
+
+//     // stopPropagation
+//     // e.stopPropagation();
+// });
+
+// document.querySelector('.nav__links').addEventListener('click', function(e) {
+//     this.style.backgroundColor = randomColor();
+//     console.log('container', e.target, e.currentTarget);
+//     console.log(this == e.currentTarget);
+// });
+
+// document.querySelector('.nav').addEventListener('click', function(e) {
+//     this.style.backgroundColor = randomColor();
+//     console.log('nav', e.target, e.currentTarget);
+// });
+
+// const h1 = document.querySelector('h1');
+
+// // Going downwards: child
+// console.log(h1.querySelectorAll('.highlight'));
+// console.log(h1.childNodes);
+// console.log(h1.children);
+// console.log(h1.firstChildNode);
+// console.log(h1.lastChild);
+// h1.firstElementChild.style.color = 'white';
+// h1.lastElementChild.style.color = 'orangered';
+
+// // Going updards: parents
+// console.log(h1.parentNode);
+// console.log(h1.parentElement);
+// h1.closest('.header').style.background = 'var(--gradient-primary)';
+
+// // Going sideways: siblings
+// console.log(h1.previousElementSibling);
+// console.log(h1.nextElementSibling);
+
+// console.log(h1.previousSibling);
+// console.log(h1.nextSibling);
+
+// console.log(h1.parentElement.children);
+
+// [...h1.parentElement.children].forEach(el => {
+//     el !== h1 && (el.style.transform = 'scale(.2)');
+// })
