@@ -6,6 +6,10 @@ const btnCloseModal = document.querySelector('.btn--close-modal');
 const btnsOpenModal = document.querySelectorAll('.btn--show-modal');
 const btnScrollTo = document.querySelector('.btn--scroll-to');
 const section1 = document.getElementById('section--1');
+const nav = document.querySelector('.nav');
+const tabs = document.querySelectorAll('.operations__tab');
+const tabsContainer = document.querySelector('.operations__tab-container');
+const tabsContent = [...document.querySelectorAll('.operations__content')];
 
 ///////////////////////////////////////
 // Modal window
@@ -22,11 +26,10 @@ const closeModal = function () {
 
 document.addEventListener('keydown', function (e) {
   e.key === 'Escape' && closeModal();
-})
+});
 
 btnsOpenModal.forEach(btn => btn.addEventListener('click', openModal));
 btnCloseModal.addEventListener('click', closeModal);
-
 
 // ///////////////////////////////////////
 // Button scrolling
@@ -53,13 +56,6 @@ btnScrollTo.addEventListener('click', function (e) {
 
 //////////////////////////////////////////
 // Page navigation
-// document.querySelectorAll('.nav__link').forEach(el => el.addEventListener('click', function(e) {
-//     e.preventDefault();
-
-//     const id = this.getAttribute('href');
-//     document.querySelector(id).scrollIntoView({ behavior: 'smooth' });
-
-// }));
 
 // 1. Add event listener to a common parent element
 // 2. determine what element originated the event
@@ -76,91 +72,44 @@ document.querySelector('.nav__links').addEventListener('click', e => {
 });
 
 //////////////////////////////////////////
-// Tab Component
-const tabs = document.querySelectorAll('.operations__tab');
-const tabsContainer = document.querySelector('.operations__tab-container');
-const tabsContent = [...document.querySelectorAll('.operations__content')];
-
-// tabsContainer.addEventListener('click', function (e) {
-//   const clicked = e.target.closest('.operations__tab');
-
-//   // Guard clause
-//   if (!clicked) return;
-
-//   // Remove active classes
-//   tabs.forEach(tab => tab.classList.remove('operations__tab--active'));
-//   tabsContent.forEach(el => el.classList.remove('operations__content--active'));
-
-//   // Activate tab
-//   clicked.classList.add('operations__tab--active');
-
-//   // Activate content area
-//   document.querySelector(`.operations__content--${clicked.dataset.tab}`).classList.add('operations__content--active');
-// });
-
-
-
-/* Experimenting: start
-============================*/
-let active, clickedId, activeId, clickable = true;
-const slideTime = 500;
-{
-  tabsContent.forEach(t => t.setAttribute(
-    'style',
-    `transition: transform ${slideTime}ms ease;
-     animation-duration: ${slideTime}ms`
-  ));
-}
-
-tabsContainer.addEventListener('click', function(e) {
-  clickable = false;
-
-  // 1. Get current Active ID
-  active = document.querySelector('.operations__tab--active');
-  activeId = +active.dataset.tab;
+// Tab component
+tabsContainer.addEventListener('click', function (e) {
   const clicked = e.target.closest('.operations__tab');
 
   // Guard clause
   if (!clicked) return;
-  const clickedId = +clicked.dataset.tab;
 
-  if (clickedId > activeId) {
-    // Go forward
-    document.querySelector(`.operations__content--${activeId}`).classList.add('slideOutLeft');
-    document.querySelector(`.operations__content--${clickedId}`).classList.add('slideInRight', 'operations__content--active');
+  // Remove active classes
+  tabs.forEach(tab => tab.classList.remove('operations__tab--active'));
+  tabsContent.forEach(el => el.classList.remove('operations__content--active'));
 
-  } else {
-    // Go backwards
-    document.querySelector(`.operations__content--${activeId}`).classList.add('slideOutRight');
-    document.querySelector(`.operations__content--${clickedId}`).classList.add('slideInLeft', 'operations__content--active');
+  // Activate tab
+  clicked.classList.add('operations__tab--active');
+
+  // Activate content area
+  document.querySelector(`.operations__content--${clicked.dataset.tab}`).classList.add('operations__content--active');
+});
+
+//////////////////////////////////////////
+// Manu fade animation
+const handleHover = function(e){
+  if (e.target.classList.contains('nav__link')) {
+    const link = e.target;
+    const siblings = link.closest('.nav').querySelectorAll('.nav__link');
+    const logo = link.closest('.nav').querySelector('img');
+
+    siblings.forEach(el => {
+      if (el !== link) el.style.opacity = this;
+    });
+    logo.style.opacity = this;
   }
-  
-  // 2. Adding active class to clicked tab
-  tabs.forEach(t => t.classList.remove('operations__tab--active'));
-  e.target.closest('.operations__tab').classList.add('operations__tab--active');
+};
 
-  
-  console.log(activeId, clickedId);
-  // if (id > )
-  
-  // active = document.querySelector('operations__content--active');
+// Passing "arguments" into handler
+nav.addEventListener('mouseover', handleHover.bind(0.5));
+nav.addEventListener('mouseout', handleHover.bind(1));
 
 
-  // console.log(tabsContent);
-});
-
-
-/* Experimenting: end
-============================*/
-
-tabsContent.forEach(c => {
-  c.addEventListener('transitionend', () => {
-    // Check for the old active transition and if clickable is false
-    
-    console.log(c, active);
-    // console.log('end', clickable);
-  })
-});
 
 
 
